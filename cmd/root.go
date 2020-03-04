@@ -67,7 +67,13 @@ with a single command.`,
 					return
 				}
 
-				err = os.Chdir(os.Getenv("TEMP"))
+				if runtime.GOOS == "windows" {
+					err = os.Chdir(os.Getenv("TEMP"))
+				} else if runtime.GOOS == "linux" {
+					if _, err := os.Stat("/tmp/qsr/"); os.IsNotExist(err) {
+						os.Mkdir("/tmp/qsr/", os.ModeDir)
+					}
+				}
 				if CheckError(err) {
 					return
 				}
