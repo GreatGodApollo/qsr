@@ -96,6 +96,24 @@ with a single command.`,
 								"supported on your system!"))
 						}
 					}
+				case "Shell":
+					{
+						if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+							err = DownloadFile("tmp.sh", file.GetRawURL())
+							if CheckError(err) {
+								return
+							}
+							RunCommand("./tmp.sh", "", "")
+							err = os.Remove("tmp.sh")
+							if CheckError(err) {
+								return
+							}
+							break
+						} else {
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
+								"supported on your system!"))
+						}
+					}
 				case "Go":
 					{
 						err = DownloadFile("tmp.go", file.GetRawURL())
