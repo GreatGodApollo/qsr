@@ -29,6 +29,7 @@ var rootCmd = &cobra.Command{
 	Short: "A quick and easy way to run gists",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
+	Version: "0.1.0",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
