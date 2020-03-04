@@ -20,8 +20,10 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/dixonwille/wmenu/v5"
 	"github.com/google/go-github/github"
 	"github.com/ttacon/chalk"
+
 	"net/http"
 	"os"
 	"runtime"
@@ -31,6 +33,7 @@ import (
 )
 
 var justPrint bool
+var yes       bool
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
@@ -40,6 +43,17 @@ var runCmd = &cobra.Command{
 with a single command.`,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
+		if !yes {
+			menu := wmenu.NewMenu(chalk.Cyan.Color("[QSR] ") + chalk.Red.Color("Are you sure you want to run this script?"))
+			menu.IsYesNo(wmenu.DefN)
+			menu.Action(verifyYes)
+			err := menu.Run()
+			if err != nil {
+				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color(err.Error()))
+				return
+			}
+			if !yes {return}
+		}
 		gcli := github.NewClient(&http.Client{})
 		gist, _, err := gcli.Gists.Get(context.Background(), args[0])
 		if err != nil {
@@ -170,4 +184,14 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 
 	runCmd.Flags().BoolVarP(&justPrint, "print", "p", false, "Print out the script instead of running it")
+	runCmd.Flags().BoolVarP(&yes, "yes", "y", false, "Confirm you want to run the script")
+}
+
+func verifyYes(opts []wmenu.Opt) error {
+	if opts[0].Value.(string) == "yes" {
+		yes = true
+	} else {
+		yes = false
+	}
+	return nil
 }
