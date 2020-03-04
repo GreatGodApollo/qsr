@@ -92,7 +92,8 @@ with a single command.`,
 							}
 							break
 						} else {
-							fmt.Println()
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
+								"supported on your system!"))
 						}
 					}
 				case "Go":
@@ -103,10 +104,7 @@ with a single command.`,
 						}
 						RunCommand("go", "run", "tmp.go")
 						err = os.Remove("tmp.go")
-						if CheckError(err) {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
-								"supported on your system!"))
-						}
+						if CheckError(err) {}
 						break
 					}
 				case "JavaScript":
