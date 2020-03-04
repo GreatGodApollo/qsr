@@ -19,13 +19,8 @@ package main
 
 import (
 	"github.com/GreatGodApollo/qsr/cmd"
-	"time"
 )
 
 func main() {
 	cmd.Execute()
-}
-
-func test(){
-	time.Sleep(3 * time.Second)
 }
