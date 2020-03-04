@@ -63,13 +63,14 @@ func CheckError(err error) bool {
 	return false
 }
 
-func RunCommand(command string, args ...string) error {
+func RunCommand(executable string, args ...string) error {
 	// Create Cmd with options
 	cmO := cmd.Options{
 		Buffered: false,
 		Streaming: true,
 	}
-	envCmd := cmd.NewCmdOptions(cmO, command, args[0], args[1])
+
+	envCmd := cmd.NewCmdOptions(cmO, executable, args...)
 
 	// Print STDOUT and STDERR lines streaming from Cmd
 	doneChan := make(chan struct{})

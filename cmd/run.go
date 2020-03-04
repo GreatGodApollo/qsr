@@ -37,11 +37,11 @@ var yes       bool
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
-	Use:   "run [gist id] [filename]",
+	Use:   "run [gist id] [filename] [arguments]",
 	Short: "Run a remote gist",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		if !yes {
 			menu := wmenu.NewMenu(chalk.Cyan.Color("[QSR] ") + chalk.Red.Color("Are you sure you want to run this script?"))
@@ -66,7 +66,7 @@ with a single command.`,
 			}
 			return
 		}
-		file := gist.Files[github.GistFilename(args[1])]
+		file := gist.Files[github.GistFilename(args[1])	]
 		if justPrint {
 			fmt.Println(chalk.Cyan.Color("[QSR]"), "FileType:",chalk.Blue.Color(file.GetLanguage()))
 			fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Magenta.Color(file.GetContent()))
@@ -96,7 +96,7 @@ with a single command.`,
 						if runtime.GOOS == "windows" {
 							err = DownloadFile("tmp.bat", file.GetRawURL())
 							if CheckError(err) {return}
-							err = RunCommand("tmp.bat", "", "")
+							err = RunCommand("tmp.bat", args[2:]...)
 							CheckError(err)
 							err = os.Remove("tmp.bat")
 							if CheckError(err) {return}
@@ -114,7 +114,7 @@ with a single command.`,
 							if CheckError(err) {return}
 							err = RunCommand("chmod", "+x", "tmp.sh")
 							CheckError(err)
-							err = RunCommand("./tmp.sh", "", "")
+							err = RunCommand("./tmp.sh", args[2:]...)
 							CheckError(err)
 							err = os.Remove("tmp.sh")
 							if CheckError(err) {return}
@@ -129,7 +129,9 @@ with a single command.`,
 					{
 						err = DownloadFile("tmp.go", file.GetRawURL())
 						if CheckError(err) {return}
-						err = RunCommand("go", "run", "tmp.go")
+						a := []string{"run", "tmp.go"}
+						a = append(a, args[2:]...)
+						err = RunCommand("go", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
@@ -141,9 +143,12 @@ with a single command.`,
 					}
 				case "JavaScript":
 					{
+
 						err = DownloadFile("tmp.js", file.GetRawURL())
 						if CheckError(err) {return}
-						err = RunCommand("node", "tmp.js", "")
+						a := []string{"tmp.js"}
+						a = append(a, args[2:]...)
+						err = RunCommand("node", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
@@ -160,14 +165,18 @@ with a single command.`,
 						fst, err := getFirstLine("tmp.py")
 						if CheckError(err) {return}
 						if fst == "#!/usr/bin/python3" {
-							err = RunCommand("python3", "tmp.py", "")
+							a := []string{"tmp.py"}
+							a = append(a, args[2:]...)
+							err = RunCommand("python3", a...)
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
 								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
 									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
 							}
 						} else if fst == "#!/usr/bin/python" {
-							err = RunCommand("python", "tmp.py", "")
+							a := []string{"tmp.py"}
+							a = append(a, args[2:]...)
+							err = RunCommand("python", a...)
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
 								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
@@ -184,7 +193,9 @@ with a single command.`,
 					{
 						err = DownloadFile("tmp.rb", file.GetRawURL())
 						if CheckError(err) {return}
-						err = RunCommand("ruby", "tmp.rb", "")
+						a := []string{"tmp.rb"}
+						a = append(a, args[2:]...)
+						err = RunCommand("ruby", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
@@ -203,7 +214,7 @@ with a single command.`,
 				err = os.Chdir(startingDirectory)
 				if CheckError(err) {return}
 			} else {
-				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That files doesn't exist!"))
+				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That file doesn't exist!"))
 			}
 		}
 	},
