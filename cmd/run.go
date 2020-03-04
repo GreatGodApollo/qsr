@@ -131,6 +131,10 @@ with a single command.`,
 						if CheckError(err) {return}
 						err = RunCommand("go", "run", "tmp.go")
 						CheckError(err)
+						if err != nil && strings.Contains(err.Error(), "executable file not found") {
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://golang.org")))
+						}
 						err = os.Remove("tmp.go")
 						if CheckError(err) {return}
 						break
@@ -141,6 +145,10 @@ with a single command.`,
 						if CheckError(err) {return}
 						err = RunCommand("node", "tmp.js", "")
 						CheckError(err)
+						if err != nil && strings.Contains(err.Error(), "executable file not found") {
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://nodejs.org/")))
+						}
 						err = os.Remove("tmp.js")
 						if CheckError(err) {return}
 						break
@@ -154,9 +162,17 @@ with a single command.`,
 						if fst == "#!/usr/bin/python3" {
 							err = RunCommand("python3", "tmp.py", "")
 							CheckError(err)
+							if err != nil && strings.Contains(err.Error(), "executable file not found") {
+								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
+							}
 						} else if fst == "#!/usr/bin/python" {
 							err = RunCommand("python", "tmp.py", "")
 							CheckError(err)
+							if err != nil && strings.Contains(err.Error(), "executable file not found") {
+								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
+							}
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("Cannot determine language!"))
 						}
@@ -170,6 +186,10 @@ with a single command.`,
 						if CheckError(err) {return}
 						err = RunCommand("ruby", "tmp.rb", "")
 						CheckError(err)
+						if err != nil && strings.Contains(err.Error(), "executable file not found") {
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://ruby-lang.org/")))
+						}
 						err = os.Remove("tmp.rb")
 						if CheckError(err) {return}
 						break
