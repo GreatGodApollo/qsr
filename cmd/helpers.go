@@ -19,12 +19,15 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-cmd/cmd"
 	"github.com/ttacon/chalk"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func DownloadFile(filepath string, url string) error {
@@ -50,13 +53,17 @@ func DownloadFile(filepath string, url string) error {
 
 func CheckError(err error) bool {
 	if err != nil {
+		if strings.Contains(err.Error(), "executable file not found") {
+			fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't supported on your system!"))
+			return true
+		}
 		fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color(err.Error()))
 		return true
 	}
 	return false
 }
 
-func RunCommand(command string, args ...string) {
+func RunCommand(command string, args ...string) error {
 	// Create Cmd with options
 	cmO := cmd.Options{
 		Buffered: false,
@@ -87,9 +94,28 @@ func RunCommand(command string, args ...string) {
 	}()
 
 	// Run and wait for Cmd to return, discard Status
-	<-envCmd.Start()
-
+	stat := <-envCmd.Start()
 	// Wait for goroutine to print everything
 	<-doneChan
-	return
+	return stat.Error
+}
+
+func getFirstLine(path string) (string, error) {
+
+	buf, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer func() {
+		if err = buf.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	snl := bufio.NewScanner(buf)
+	snl.Scan()
+	txt := snl.Text()
+	if err := snl.Err(); err != nil {return "", err}
+	return txt, nil
 }

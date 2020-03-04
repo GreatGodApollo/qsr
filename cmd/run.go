@@ -80,9 +80,11 @@ with a single command.`,
 
 				if runtime.GOOS == "windows" {
 					err = os.Chdir(os.Getenv("TEMP"))
+					if CheckError(err) {return}
 				} else if runtime.GOOS == "linux" {
 					if _, err := os.Stat("/tmp/qsr/"); os.IsNotExist(err) {
-						os.Mkdir("/tmp/qsr/", os.ModeDir)
+						err = os.Mkdir("/tmp/qsr/", os.ModeDir)
+						if CheckError(err) {return}
 					}
 				}
 				if CheckError(err) {
@@ -93,74 +95,83 @@ with a single command.`,
 					{
 						if runtime.GOOS == "windows" {
 							err = DownloadFile("tmp.bat", file.GetRawURL())
-							if CheckError(err) {
-								return
-							}
-							RunCommand("tmp.bat", "", "")
+							if CheckError(err) {return}
+							err = RunCommand("tmp.bat", "", "")
+							CheckError(err)
 							err = os.Remove("tmp.bat")
-							if CheckError(err) {
-								return
-							}
+							if CheckError(err) {return}
 							break
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
 								"supported on your system!"))
+							return
 						}
 					}
 				case "Shell":
 					{
 						if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 							err = DownloadFile("tmp.sh", file.GetRawURL())
-							if CheckError(err) {
-								return
-							}
-							RunCommand("chmod", "+x", "tmp.sh")
-							RunCommand("./tmp.sh", "", "")
+							if CheckError(err) {return}
+							err = RunCommand("chmod", "+x", "tmp.sh")
+							CheckError(err)
+							err = RunCommand("./tmp.sh", "", "")
+							CheckError(err)
 							err = os.Remove("tmp.sh")
-							if CheckError(err) {
-								return
-							}
+							if CheckError(err) {return}
 							break
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
 								"supported on your system!"))
+							return
 						}
 					}
 				case "Go":
 					{
 						err = DownloadFile("tmp.go", file.GetRawURL())
-						if CheckError(err) {
-							return
-						}
-						RunCommand("go", "run", "tmp.go")
+						if CheckError(err) {return}
+						err = RunCommand("go", "run", "tmp.go")
+						CheckError(err)
 						err = os.Remove("tmp.go")
-						if CheckError(err) {}
+						if CheckError(err) {return}
 						break
 					}
 				case "JavaScript":
 					{
 						err = DownloadFile("tmp.js", file.GetRawURL())
-						if CheckError(err) {
-							return
-						}
-						RunCommand("node", "tmp.js", "")
+						if CheckError(err) {return}
+						err = RunCommand("node", "tmp.js", "")
+						CheckError(err)
 						err = os.Remove("tmp.js")
-						if CheckError(err) {
-							return
+						if CheckError(err) {return}
+						break
+					}
+				case "Python":
+					{
+						err = DownloadFile("tmp.py", file.GetRawURL())
+						if CheckError(err) {return}
+						fst, err := getFirstLine("tmp.py")
+						if CheckError(err) {return}
+						if fst == "#!/usr/bin/python3" {
+							err = RunCommand("python3", "tmp.py", "")
+							CheckError(err)
+						} else if fst == "#!/usr/bin/python" {
+							err = RunCommand("python", "tmp.py", "")
+							CheckError(err)
+						} else {
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("Cannot determine language!"))
 						}
+						err = os.Remove("tmp.py")
+						if CheckError(err) {return}
 						break
 					}
 				case "Ruby":
 					{
 						err = DownloadFile("tmp.rb", file.GetRawURL())
-						if CheckError(err) {
-							return
-						}
-						RunCommand("ruby", "tmp.rb", "")
+						if CheckError(err) {return}
+						err = RunCommand("ruby", "tmp.rb", "")
+						CheckError(err)
 						err = os.Remove("tmp.rb")
-						if CheckError(err) {
-							return
-						}
+						if CheckError(err) {return}
 						break
 					}
 				default:
@@ -170,9 +181,7 @@ with a single command.`,
 					}
 				}
 				err = os.Chdir(startingDirectory)
-				if CheckError(err) {
-					return
-				}
+				if CheckError(err) {return}
 			} else {
 				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That files doesn't exist!"))
 			}
