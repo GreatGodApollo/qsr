@@ -103,6 +103,7 @@ with a single command.`,
 							if CheckError(err) {
 								return
 							}
+							RunCommand("chmod", "+x", "tmp.sh")
 							RunCommand("./tmp.sh", "", "")
 							err = os.Remove("tmp.sh")
 							if CheckError(err) {
