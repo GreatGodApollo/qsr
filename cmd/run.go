@@ -109,24 +109,6 @@ with a single command.`,
 							return
 						}
 					}
-				case "Shell":
-					{
-						if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-							err = DownloadFile("tmp.sh", file.GetRawURL())
-							if CheckError(err) {return}
-							err = RunCommand("chmod", "+x", "tmp.sh")
-							CheckError(err)
-							err = RunCommand("./tmp.sh", args[2:]...)
-							CheckError(err)
-							err = os.Remove("tmp.sh")
-							if CheckError(err) {return}
-							break
-						} else {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
-								"supported on your system!"))
-							return
-						}
-					}
 				case "Go":
 					{
 						err = DownloadFile("tmp.go", file.GetRawURL())
@@ -206,6 +188,24 @@ with a single command.`,
 						err = os.Remove("tmp.rb")
 						if CheckError(err) {return}
 						break
+					}
+				case "Shell":
+					{
+						if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+							err = DownloadFile("tmp.sh", file.GetRawURL())
+							if CheckError(err) {return}
+							err = RunCommand("chmod", "+x", "tmp.sh")
+							CheckError(err)
+							err = RunCommand("./tmp.sh", args[2:]...)
+							CheckError(err)
+							err = os.Remove("tmp.sh")
+							if CheckError(err) {return}
+							break
+						} else {
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
+								"supported on your system!"))
+							return
+						}
 					}
 				default:
 					{
