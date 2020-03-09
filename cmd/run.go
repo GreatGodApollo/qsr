@@ -43,17 +43,6 @@ var runCmd = &cobra.Command{
 with a single command.`,
 	Args:  cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		if !yes {
-			menu := wmenu.NewMenu(chalk.Cyan.Color("[QSR] ") + chalk.Red.Color("Are you sure you want to run this script?"))
-			menu.IsYesNo(wmenu.DefN)
-			menu.Action(verifyYes)
-			err := menu.Run()
-			if err != nil {
-				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color(err.Error()))
-				return
-			}
-			if !yes {return}
-		}
 		gcli := github.NewClient(&http.Client{})
 		gist, _, err := gcli.Gists.Get(context.Background(), args[0])
 		if err != nil {
@@ -69,10 +58,23 @@ with a single command.`,
 		file := gist.Files[github.GistFilename(args[1])	]
 		if justPrint {
 			fmt.Println(chalk.Cyan.Color("[QSR]"), "FileType:",chalk.Blue.Color(file.GetLanguage()))
-			fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Magenta.Color(file.GetContent()))
+			a := strings.Split(file.GetContent(), "\n")
+			b := strings.Join(a, "\n" + chalk.Cyan.Color("[QSR] "))
+			fmt.Println(chalk.Cyan.Color("[QSR]"), b)
 		} else {
 
 			if file.GetSize() > 0 {
+				if !yes {
+					menu := wmenu.NewMenu(chalk.Cyan.Color("[QSR] ") + chalk.Red.Color("Are you sure you want to run this script?"))
+					menu.IsYesNo(wmenu.DefN)
+					menu.Action(verifyYes)
+					err := menu.Run()
+					if err != nil {
+						fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color(err.Error()))
+						return
+					}
+					if !yes {return}
+				}
 				startingDirectory, err := os.Getwd()
 				if CheckError(err) {
 					return
