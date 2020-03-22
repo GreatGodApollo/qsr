@@ -12,9 +12,10 @@ Quick Script Runner (qsr) is a command line utility program that allows users to
 * [Cobra](github.com/spf13/cobra)
 * [Chalk](github.com/ttacon/chalk)
 
-## Install
 
-At the moment, you'll have to manually build the executable from the source, although this shouldn't be hard.
+## Compiling
+
+To compile the executable from the source, it's extremely easy, and can be done in as little as 3 commands.
 
 You can follow these instructions to build:
 ```bash
@@ -28,6 +29,13 @@ $ cd qsr
 $ go build
 
 ```
+
+
+## Installing
+
+Just head on over to the [releases](https://github.com/GreatGodApollo/qsr/releases) page and download the latest release
+for your platform. Extract it using something like [7-Zip](https://www.7-zip.org) for Windows or `tar` on other 
+platforms (`tar -zxvf qsr*.tar.gz`).
 
 That's it! Although you'll probably want to also add the binary to your path for ease of use.
 
