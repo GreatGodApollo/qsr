@@ -34,6 +34,8 @@ import (
 
 var justPrint bool
 var yes       bool
+var dlpath    string
+
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
@@ -75,32 +77,26 @@ with a single command.`,
 					}
 					if !yes {return}
 				}
-				startingDirectory, err := os.Getwd()
-				if CheckError(err) {
-					return
-				}
 
 				if runtime.GOOS == "windows" {
-					err = os.Chdir(os.Getenv("TEMP"))
-					if CheckError(err) {return}
+					dlpath = os.Getenv("TEMP")
 				} else if runtime.GOOS == "linux" {
-					if _, err := os.Stat("/tmp/qsr/"); os.IsNotExist(err) {
-						err = os.Mkdir("/tmp/qsr/", os.ModeDir)
+					if _, err := os.Stat(os.Getenv("TMPDIR") + "qsr/"); os.IsNotExist(err) {
+						err = os.Mkdir(os.Getenv("TMPDIR") + "qsr/", os.ModeDir)
 						if CheckError(err) {return}
+						dlpath = os.Getenv("TMPDIR") + "qsr/"
 					}
 				}
-				if CheckError(err) {
-					return
-				}
+
 				switch file.GetLanguage() {
 				case "Batchfile":
 					{
 						if runtime.GOOS == "windows" {
-							err = DownloadFile("tmp.bat", file.GetRawURL())
+							err = DownloadFile(dlpath + "tmp.bat", file.GetRawURL())
 							if CheckError(err) {return}
-							err = RunCommand("tmp.bat", args[2:]...)
+							err = RunCommand(dlpath + "tmp.bat", args[2:]...)
 							CheckError(err)
-							err = os.Remove("tmp.bat")
+							err = os.Remove(dlpath + "tmp.bat")
 							if CheckError(err) {return}
 							break
 						} else {
@@ -111,9 +107,9 @@ with a single command.`,
 					}
 				case "Go":
 					{
-						err = DownloadFile("tmp.go", file.GetRawURL())
+						err = DownloadFile(dlpath + "tmp.go", file.GetRawURL())
 						if CheckError(err) {return}
-						a := []string{"run", "tmp.go"}
+						a := []string{"run", dlpath + "tmp.go"}
 						a = append(a, args[2:]...)
 						err = RunCommand("go", a...)
 						CheckError(err)
@@ -121,16 +117,16 @@ with a single command.`,
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
 								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://golang.org")))
 						}
-						err = os.Remove("tmp.go")
+						err = os.Remove(dlpath + "tmp.go")
 						if CheckError(err) {return}
 						break
 					}
 				case "JavaScript":
 					{
 
-						err = DownloadFile("tmp.js", file.GetRawURL())
+						err = DownloadFile(dlpath + "tmp.js", file.GetRawURL())
 						if CheckError(err) {return}
-						a := []string{"tmp.js"}
+						a := []string{dlpath + "tmp.js"}
 						a = append(a, args[2:]...)
 						err = RunCommand("node", a...)
 						CheckError(err)
@@ -138,18 +134,18 @@ with a single command.`,
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
 								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://nodejs.org/")))
 						}
-						err = os.Remove("tmp.js")
+						err = os.Remove(dlpath + "tmp.js")
 						if CheckError(err) {return}
 						break
 					}
 				case "Python":
 					{
-						err = DownloadFile("tmp.py", file.GetRawURL())
+						err = DownloadFile(dlpath + "tmp.py", file.GetRawURL())
 						if CheckError(err) {return}
-						fst, err := getFirstLine("tmp.py")
+						fst, err := getFirstLine(dlpath + "tmp.py")
 						if CheckError(err) {return}
 						if fst == "#!/usr/bin/python3" {
-							a := []string{"tmp.py"}
+							a := []string{dlpath + "tmp.py"}
 							a = append(a, args[2:]...)
 							err = RunCommand("python3", a...)
 							CheckError(err)
@@ -158,7 +154,7 @@ with a single command.`,
 									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
 							}
 						} else if fst == "#!/usr/bin/python" {
-							a := []string{"tmp.py"}
+							a := []string{dlpath + "tmp.py"}
 							a = append(a, args[2:]...)
 							err = RunCommand("python", a...)
 							CheckError(err)
@@ -169,15 +165,15 @@ with a single command.`,
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("Cannot determine language!"))
 						}
-						err = os.Remove("tmp.py")
+						err = os.Remove(dlpath + "tmp.py")
 						if CheckError(err) {return}
 						break
 					}
 				case "Ruby":
 					{
-						err = DownloadFile("tmp.rb", file.GetRawURL())
+						err = DownloadFile(dlpath + "tmp.rb", file.GetRawURL())
 						if CheckError(err) {return}
-						a := []string{"tmp.rb"}
+						a := []string{dlpath + "tmp.rb"}
 						a = append(a, args[2:]...)
 						err = RunCommand("ruby", a...)
 						CheckError(err)
@@ -185,20 +181,20 @@ with a single command.`,
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
 								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://ruby-lang.org/")))
 						}
-						err = os.Remove("tmp.rb")
+						err = os.Remove(dlpath + "tmp.rb")
 						if CheckError(err) {return}
 						break
 					}
 				case "Shell":
 					{
 						if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-							err = DownloadFile("tmp.sh", file.GetRawURL())
+							err = DownloadFile(dlpath + "tmp.sh", file.GetRawURL())
 							if CheckError(err) {return}
-							err = RunCommand("chmod", "+x", "tmp.sh")
+							err = RunCommand("chmod", "+x", dlpath + "tmp.sh")
 							CheckError(err)
-							err = RunCommand("./tmp.sh", args[2:]...)
+							err = RunCommand("./" +dlpath + "tmp.sh", args[2:]...)
 							CheckError(err)
-							err = os.Remove("tmp.sh")
+							err = os.Remove(dlpath + "tmp.sh")
 							if CheckError(err) {return}
 							break
 						} else {
@@ -213,8 +209,6 @@ with a single command.`,
 						break
 					}
 				}
-				err = os.Chdir(startingDirectory)
-				if CheckError(err) {return}
 			} else {
 				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That file doesn't exist!"))
 			}
