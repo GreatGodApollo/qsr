@@ -1,3 +1,4 @@
+<img alt="Banner" src="assets/img/banner.png" style="border-radius:10px">
 <h1 align="center">Quick Script Runner</h1>
 <p align="center"><i>Made with :heart: by <a href="https://github.com/GreatGodApollo">@GreatGodApollo</a></i></p>
 
@@ -21,6 +22,8 @@ You can follow these instructions to build:
 # This assumes you already have git and golang installed.
 
 $ git clone https://github.com/GreatGodApollo/qsr.git
+
+$ cd qsr
 
 $ go build
 
