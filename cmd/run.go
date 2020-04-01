@@ -33,9 +33,8 @@ import (
 )
 
 var justPrint bool
-var yes       bool
-var dlpath    string
-
+var yes bool
+var dlpath string
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
@@ -43,7 +42,7 @@ var runCmd = &cobra.Command{
 	Short: "Run a remote gist",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
-	Args:  cobra.MinimumNArgs(2),
+	Args: cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		gcli := github.NewClient(&http.Client{})
 		gist, _, err := gcli.Gists.Get(context.Background(), args[0])
@@ -57,11 +56,11 @@ with a single command.`,
 			}
 			return
 		}
-		file := gist.Files[github.GistFilename(args[1])	]
+		file := gist.Files[github.GistFilename(args[1])]
 		if justPrint {
-			fmt.Println(chalk.Cyan.Color("[QSR]"), "FileType:",chalk.Blue.Color(file.GetLanguage()))
+			fmt.Println(chalk.Cyan.Color("[QSR]"), "FileType:", chalk.Blue.Color(file.GetLanguage()))
 			a := strings.Split(file.GetContent(), "\n")
-			b := strings.Join(a, "\n" + chalk.Cyan.Color("[QSR] "))
+			b := strings.Join(a, "\n"+chalk.Cyan.Color("[QSR] "))
 			fmt.Println(chalk.Cyan.Color("[QSR]"), b)
 		} else {
 
@@ -75,82 +74,123 @@ with a single command.`,
 						fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color(err.Error()))
 						return
 					}
-					if !yes {return}
+					if !yes {
+						return
+					}
 				}
 
 				if runtime.GOOS == "windows" {
-					dlpath = os.Getenv("TEMP")
-				} else if runtime.GOOS == "linux" {
-					if _, err := os.Stat(os.Getenv("TMPDIR") + "qsr/"); os.IsNotExist(err) {
-						err = os.Mkdir(os.Getenv("TMPDIR") + "qsr/", os.ModeDir)
-						if CheckError(err) {return}
-						dlpath = os.Getenv("TMPDIR") + "qsr/"
+					winDir := os.Getenv("USERPROFILE") + "\\.qsr\\"
+					if _, err := os.Stat(winDir); err != nil {
+						if os.IsNotExist(err) {
+							err = os.Mkdir(winDir, os.ModeDir)
+							if CheckError(err) {
+								return
+							}
+						} else {
+							if CheckError(err) {
+								return
+							}
+						}
 					}
+					dlpath = os.Getenv("USERPROFILE" + "\\.qsr\\")
+
+				} else if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+					linuxDir := "~/.qsr/"
+					if _, err := os.Stat(linuxDir); err != nil {
+						if os.IsNotExist(err) {
+							err = os.Mkdir(linuxDir, os.ModeDir)
+							if CheckError(err) {
+								return
+							}
+						} else {
+							if CheckError(err) {
+								return
+							}
+						}
+					}
+					dlpath = "~/.qsr/"
 				}
 
 				switch file.GetLanguage() {
 				case "Batchfile":
 					{
 						if runtime.GOOS == "windows" {
-							err = DownloadFile(dlpath + "tmp.bat", file.GetRawURL())
-							if CheckError(err) {return}
-							err = RunCommand(dlpath + "tmp.bat", args[2:]...)
+							err = DownloadFile(dlpath+"tmp.bat", file.GetRawURL())
+							if CheckError(err) {
+								return
+							}
+							err = RunCommand(dlpath+"tmp.bat", args[2:]...)
 							CheckError(err)
 							err = os.Remove(dlpath + "tmp.bat")
-							if CheckError(err) {return}
+							if CheckError(err) {
+								return
+							}
 							break
 						} else {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't "+
 								"supported on your system!"))
 							return
 						}
 					}
 				case "Go":
 					{
-						err = DownloadFile(dlpath + "tmp.go", file.GetRawURL())
-						if CheckError(err) {return}
+						err = DownloadFile(dlpath+"tmp.go", file.GetRawURL())
+						if CheckError(err) {
+							return
+						}
 						a := []string{"run", dlpath + "tmp.go"}
 						a = append(a, args[2:]...)
 						err = RunCommand("go", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
 								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://golang.org")))
 						}
 						err = os.Remove(dlpath + "tmp.go")
-						if CheckError(err) {return}
+						if CheckError(err) {
+							return
+						}
 						break
 					}
 				case "JavaScript":
 					{
 
-						err = DownloadFile(dlpath + "tmp.js", file.GetRawURL())
-						if CheckError(err) {return}
+						err = DownloadFile(dlpath+"tmp.js", file.GetRawURL())
+						if CheckError(err) {
+							return
+						}
 						a := []string{dlpath + "tmp.js"}
 						a = append(a, args[2:]...)
 						err = RunCommand("node", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
 								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://nodejs.org/")))
 						}
 						err = os.Remove(dlpath + "tmp.js")
-						if CheckError(err) {return}
+						if CheckError(err) {
+							return
+						}
 						break
 					}
 				case "Python":
 					{
-						err = DownloadFile(dlpath + "tmp.py", file.GetRawURL())
-						if CheckError(err) {return}
+						err = DownloadFile(dlpath+"tmp.py", file.GetRawURL())
+						if CheckError(err) {
+							return
+						}
 						fst, err := getFirstLine(dlpath + "tmp.py")
-						if CheckError(err) {return}
+						if CheckError(err) {
+							return
+						}
 						if fst == "#!/usr/bin/python3" {
 							a := []string{dlpath + "tmp.py"}
 							a = append(a, args[2:]...)
 							err = RunCommand("python3", a...)
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
-								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
 									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
 							}
 						} else if fst == "#!/usr/bin/python" {
@@ -159,46 +199,56 @@ with a single command.`,
 							err = RunCommand("python", a...)
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
-								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
 									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
 							}
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("Cannot determine language!"))
 						}
 						err = os.Remove(dlpath + "tmp.py")
-						if CheckError(err) {return}
+						if CheckError(err) {
+							return
+						}
 						break
 					}
 				case "Ruby":
 					{
-						err = DownloadFile(dlpath + "tmp.rb", file.GetRawURL())
-						if CheckError(err) {return}
+						err = DownloadFile(dlpath+"tmp.rb", file.GetRawURL())
+						if CheckError(err) {
+							return
+						}
 						a := []string{dlpath + "tmp.rb"}
 						a = append(a, args[2:]...)
 						err = RunCommand("ruby", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions " +
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
 								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://ruby-lang.org/")))
 						}
 						err = os.Remove(dlpath + "tmp.rb")
-						if CheckError(err) {return}
+						if CheckError(err) {
+							return
+						}
 						break
 					}
 				case "Shell":
 					{
 						if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-							err = DownloadFile(dlpath + "tmp.sh", file.GetRawURL())
-							if CheckError(err) {return}
-							err = RunCommand("chmod", "+x", dlpath + "tmp.sh")
+							err = DownloadFile(dlpath+"tmp.sh", file.GetRawURL())
+							if CheckError(err) {
+								return
+							}
+							err = RunCommand("chmod", "+x", dlpath+"tmp.sh")
 							CheckError(err)
-							err = RunCommand("./" +dlpath + "tmp.sh", args[2:]...)
+							err = RunCommand("./"+dlpath+"tmp.sh", args[2:]...)
 							CheckError(err)
 							err = os.Remove(dlpath + "tmp.sh")
-							if CheckError(err) {return}
+							if CheckError(err) {
+								return
+							}
 							break
 						} else {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't " +
+							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't "+
 								"supported on your system!"))
 							return
 						}
