@@ -84,7 +84,13 @@ with a single command.`,
 				if CheckError(err) {
 					return
 				}
-				directory := usr.HomeDir + "\\.qsr\\"
+
+				directory := ""
+				if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
+					directory = usr.HomeDir + "/.qsr/"
+				} else if runtime.GOOS == "windows" {
+					directory = usr.HomeDir + "\\.qsr\\"
+				}
 				if _, err := os.Stat(directory); err != nil {
 					if os.IsNotExist(err) {
 						err = os.Mkdir(directory, os.ModeDir)
