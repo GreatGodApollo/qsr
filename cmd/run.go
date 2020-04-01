@@ -23,6 +23,7 @@ import (
 	"github.com/dixonwille/wmenu/v5"
 	"github.com/google/go-github/github"
 	"github.com/ttacon/chalk"
+	"os/user"
 
 	"net/http"
 	"os"
@@ -79,38 +80,24 @@ with a single command.`,
 					}
 				}
 
-				if runtime.GOOS == "windows" {
-					winDir := os.Getenv("USERPROFILE") + "\\.qsr\\"
-					if _, err := os.Stat(winDir); err != nil {
-						if os.IsNotExist(err) {
-							err = os.Mkdir(winDir, os.ModeDir)
-							if CheckError(err) {
-								return
-							}
-						} else {
-							if CheckError(err) {
-								return
-							}
-						}
-					}
-					dlpath = os.Getenv("USERPROFILE" + "\\.qsr\\")
-
-				} else if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-					linuxDir := "~/.qsr/"
-					if _, err := os.Stat(linuxDir); err != nil {
-						if os.IsNotExist(err) {
-							err = os.Mkdir(linuxDir, os.ModeDir)
-							if CheckError(err) {
-								return
-							}
-						} else {
-							if CheckError(err) {
-								return
-							}
-						}
-					}
-					dlpath = "~/.qsr/"
+				usr, err := user.Current()
+				if CheckError(err) {
+					return
 				}
+				directory := usr.HomeDir + "\\.qsr\\"
+				if _, err := os.Stat(directory); err != nil {
+					if os.IsNotExist(err) {
+						err = os.Mkdir(directory, os.ModeDir)
+						if CheckError(err) {
+							return
+						}
+					} else {
+						if CheckError(err) {
+							return
+						}
+					}
+				}
+				dlpath = os.Getenv(directory)
 
 				switch file.GetLanguage() {
 				case "Batchfile":
