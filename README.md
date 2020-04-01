@@ -9,8 +9,8 @@ Quick Script Runner (qsr) is a command line utility program that allows users to
 * [wmenu](https://github.com/dixonwille/wmenu/)
 * [go-cmd](https://github.com/go-cmd/cmd)
 * [go-github](https://github.com/google/go-github)
-* [Cobra](github.com/spf13/cobra)
-* [Chalk](github.com/ttacon/chalk)
+* [Cobra](https://github.com/spf13/cobra)
+* [Chalk](https://github.com/ttacon/chalk)
 
 
 ## Compiling
