@@ -43,7 +43,7 @@ That's it! Although you'll probably want to also add the binary to your path for
 ### Go Get
 Do you have go installed? You can run just one simple command to install QSR!
 ```shell
-go get -u github.com/GreatGodApollo/qsr
+$ go get -u github.com/GreatGodApollo/qsr
 ```
 
 ## Usage
