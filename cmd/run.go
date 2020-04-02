@@ -22,9 +22,9 @@ import (
 	"fmt"
 	"github.com/dixonwille/wmenu/v5"
 	"github.com/google/go-github/github"
+	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/viper"
 	"github.com/ttacon/chalk"
-	"os/user"
-
 	"net/http"
 	"os"
 	"runtime"
@@ -43,8 +43,37 @@ var runCmd = &cobra.Command{
 	Short: "Run a remote gist",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
-	Args: cobra.MinimumNArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
+	Args: cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, inargs []string) {
+		var args = make([]string,2)
+		if viper.ConfigFileUsed() != "" {
+			sub := viper.GetStringMapString(inargs[0])
+			if sub != nil {
+				if sub["gist"] != "" && sub["file"] != "" {
+					args[0] = sub["gist"]
+					args[1] = sub["file"]
+					if len(inargs) > 1 {
+						args = append(args, inargs[1:]...)
+					}
+				} else if sub["gist"] != "" && sub["file"] == "" {
+					args[0] = sub["gist"]
+					if len(inargs) > 1 {
+						args[1] = inargs[1]
+						args = append(args, inargs[2:]...)
+					} else {
+						fmt.Println(NewMessage(chalk.Red, "You must provide a file to run!").Build())
+						return
+					}
+				} else {
+					fmt.Println(NewMessage(chalk.Red, "Invalid alias configuration!").Build())
+					return
+				}
+			} else {
+				args = inargs
+			}
+		} else {
+			args = inargs
+		}
 		gcli := github.NewClient(&http.Client{})
 		gist, _, err := gcli.Gists.Get(context.Background(), args[0])
 		if err != nil {
@@ -67,12 +96,12 @@ with a single command.`,
 
 			if file.GetSize() > 0 {
 				if !yes {
-					menu := wmenu.NewMenu(chalk.Cyan.Color("[QSR] ") + chalk.Red.Color("Are you sure you want to run this script?"))
+					menu := wmenu.NewMenu(NewMessage(chalk.Red, "Are you sure you want to run this script?").Build())
 					menu.IsYesNo(wmenu.DefN)
 					menu.Action(verifyYes)
 					err := menu.Run()
 					if err != nil {
-						fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color(err.Error()))
+						fmt.Println(NewMessage(chalk.Red, err.Error()).Build())
 						return
 					}
 					if !yes {
@@ -80,16 +109,16 @@ with a single command.`,
 					}
 				}
 
-				usr, err := user.Current()
-				if CheckError(err) {
-					return
+				home, err := homedir.Dir()
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
 				}
-
 				directory := ""
 				if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
-					directory = usr.HomeDir + "/.qsr/"
+					directory = home + "/.qsr/"
 				} else if runtime.GOOS == "windows" {
-					directory = usr.HomeDir + "\\.qsr\\"
+					directory = home + "\\.qsr\\"
 				}
 				if _, err := os.Stat(directory); err != nil {
 					if os.IsNotExist(err) {
@@ -121,8 +150,7 @@ with a single command.`,
 							}
 							break
 						} else {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't "+
-								"supported on your system!"))
+							fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!").Build())
 							return
 						}
 					}
@@ -137,8 +165,8 @@ with a single command.`,
 						err = RunCommand("go", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
-								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://golang.org")))
+							fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
+								ThenColorStyle(chalk.Red, chalk.Underline, "https://golang.org").Build())
 						}
 						err = os.Remove(dlpath + "tmp.go")
 						if CheckError(err) {
@@ -158,8 +186,8 @@ with a single command.`,
 						err = RunCommand("node", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
-								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://nodejs.org/")))
+							fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
+								ThenColorStyle(chalk.Red, chalk.Underline, "https://nodejs.org").Build())
 						}
 						err = os.Remove(dlpath + "tmp.js")
 						if CheckError(err) {
@@ -183,8 +211,8 @@ with a single command.`,
 							err = RunCommand("python3", a...)
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
-								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
-									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
+								fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
+									ThenColorStyle(chalk.Red, chalk.Underline, "https://www.python.org").Build())
 							}
 						} else if fst == "#!/usr/bin/python" {
 							a := []string{dlpath + "tmp.py"}
@@ -192,8 +220,8 @@ with a single command.`,
 							err = RunCommand("python", a...)
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
-								fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
-									"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://www.python.org")))
+								fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
+									ThenColorStyle(chalk.Red, chalk.Underline, "https://www.python.org").Build())
 							}
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("Cannot determine language!"))
@@ -215,8 +243,8 @@ with a single command.`,
 						err = RunCommand("ruby", a...)
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("You can find instructions "+
-								"to install it here:"), chalk.Red.Color(chalk.Underline.TextStyle("https://ruby-lang.org/")))
+							fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
+								ThenColorStyle(chalk.Red, chalk.Underline, "https://ruby-lang.org").Build())
 						}
 						err = os.Remove(dlpath + "tmp.rb")
 						if CheckError(err) {
@@ -241,19 +269,18 @@ with a single command.`,
 							}
 							break
 						} else {
-							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't "+
-								"supported on your system!"))
+							fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!").Build())
 							return
 						}
 					}
 				default:
 					{
-						fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That language isn't supported!"))
+						fmt.Println(NewMessage(chalk.Red, "That language isn't supported!").Build())
 						break
 					}
 				}
 			} else {
-				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That file doesn't exist!"))
+				fmt.Println(NewMessage(chalk.Red, "That file doesn't exist!").Build())
 			}
 		}
 	},

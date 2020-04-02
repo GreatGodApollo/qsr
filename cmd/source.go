@@ -29,8 +29,8 @@ var sourceCmd = &cobra.Command{
 	Long: `Just a quick and easy way to get a link
 to the source code of QSR.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Blue.Color("Go check out the source @"),
-			chalk.Blue.Color(chalk.Underline.TextStyle("https://github.com/GreatGodApollo/qsr")))
+		fmt.Println(NewMessage(chalk.Blue, "Go check out the source @").
+			ThenColorStyle(chalk.Blue, chalk.Underline, "https://github.com/GreatGodApollo/qsr").Build())
 	},
 }
 

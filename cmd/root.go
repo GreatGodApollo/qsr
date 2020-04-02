@@ -19,9 +19,15 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/ttacon/chalk"
 	"os"
+	"strings"
 )
+
+var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -36,10 +42,53 @@ with a single command.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
+		if strings.HasPrefix(err.Error(), "unknown command") {
+			return
+		}
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
+	cobra.OnInitialize(initConfig)
+
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.qsr.json)")
+}
+
+func initConfig() {
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	} else {
+		home, err := homedir.Dir()
+		if CheckError(err) {os.Exit(1)}
+
+		viper.AddConfigPath(home)
+		viper.SetConfigName(".qsr")
+		viper.SetConfigType("json")
+		if createFileIfNotExist(home + "/", ".qsr.json") != nil {os.Exit(1)}
+
+	}
+
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println(NewMessage(chalk.Blue, "Using config file:").ThenColor(chalk.Green, viper.ConfigFileUsed()).Build())
+	}
+	SetGists()
+	if CheckError(viper.WriteConfig()) {os.Exit(1)}
+}
+
+func createFileIfNotExist(dir, file string) error {
+	if _, err := os.Stat(dir + file); err != nil {
+		if os.IsNotExist(err) {
+			f, err := os.Create(dir + file)
+			if CheckError(err) {return err}
+			err = f.Close()
+			if CheckError(err) {return err}
+		} else {
+			return err
+		}
+	}
+	return nil
 }
