@@ -40,6 +40,13 @@ platforms (`tar -zxvf qsr*.tar.gz`).
 
 That's it! Although you'll probably want to also add the binary to your path for ease of use.
 
+### Scoop
+Do you happen to have [scoop](https://github.com/lukesampson/scoop) installed? Well lucky for you, I happen to have a [scoop](https://github.com/lukesampson/scoop) bucket. Said bucket's name is [Trough](https://github.com/GreatGodApollo/trough).
+```shell
+$ scoop bucket add trough https://github.com/GreatGodApollo/trough.git
+$ scoop install qsr
+```
+
 ### Go Get
 Do you have go installed? You can run just one simple command to install QSR!
 ```shell
