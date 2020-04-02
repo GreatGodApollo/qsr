@@ -65,6 +65,9 @@ $ qsr --help
   Use "qsr [command] --help" for more information about a command.
 ```
 
+## Included Gists
+To prevent overcrowding this README, the included gist aliases are located in [gists.md](gists.md)
+
 ## Supported Languages
 - Batch (Windows Only)
 - Golang
