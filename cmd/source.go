@@ -30,7 +30,7 @@ var sourceCmd = &cobra.Command{
 to the source code of QSR.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(NewMessage(chalk.Blue, "Go check out the source @").
-			ThenColorStyle(chalk.Blue, chalk.Underline, "https://github.com/GreatGodApollo/qsr").Build())
+			ThenColorStyle(chalk.Blue, chalk.Underline, "https://github.com/GreatGodApollo/qsr"))
 	},
 }
 

@@ -38,11 +38,11 @@ var unlinkCmd = &cobra.Command{
 				return
 			}
 			fmt.Println(NewMessage(chalk.Green, "Successfully deleted gist alias").
-				ThenColor(chalk.Cyan, args[0]).Build())
+				ThenColor(chalk.Cyan, args[0]).String())
 		} else {
 			fmt.Println(NewMessage(chalk.Red, "Gist alias").
 				ThenColor(chalk.Cyan, args[0]).
-				ThenColor(chalk.Red, "does not exist!").Build())
+				ThenColor(chalk.Red, "does not exist!"))
 		}
 	},
 }

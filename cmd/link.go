@@ -36,7 +36,7 @@ var linkCmd = &cobra.Command{
 			fmt.Println(NewMessage(chalk.Green, "Successfully wrote gist alias").
 				ThenColor(chalk.Cyan, args[0]).
 				ThenColor(chalk.Green, "as").
-				ThenColor(chalk.Cyan, args[1]).Build())
+				ThenColor(chalk.Cyan, args[1]))
 		} else {
 			viper.Set(args[0], map[string]string{"gist": args[1], "file": args[2]})
 			err := viper.WriteConfig()
@@ -46,7 +46,7 @@ var linkCmd = &cobra.Command{
 				ThenColor(chalk.Green, "as").
 				ThenColor(chalk.Cyan, args[1]).
 				ThenColor(chalk.Green,"with file").
-				ThenColor(chalk.Cyan, args[2]).Build())
+				ThenColor(chalk.Cyan, args[2]))
 		}
 	},
 }

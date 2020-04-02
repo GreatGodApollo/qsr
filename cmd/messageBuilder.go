@@ -45,7 +45,7 @@ func (msg *Message) ThenColorStyle(color chalk.Color, style chalk.TextStyle, mes
 	return msg
 }
 
-func (msg *Message) Build() string {
+func (msg *Message) String() string {
 	return msg.message
 }
 

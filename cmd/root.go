@@ -35,7 +35,7 @@ var rootCmd = &cobra.Command{
 	Short: "A quick and easy way to run gists",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
-	Version: "0.8.0",
+	Version: "0.8.1",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -73,7 +73,7 @@ func initConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println(NewMessage(chalk.Blue, "Using config file:").ThenColor(chalk.Green, viper.ConfigFileUsed()).Build())
+		fmt.Println(NewMessage(chalk.Blue, "Using config file:").ThenColor(chalk.Green, viper.ConfigFileUsed()))
 	}
 	SetGists()
 	if CheckError(viper.WriteConfig()) {os.Exit(1)}

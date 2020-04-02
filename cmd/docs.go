@@ -18,8 +18,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+	"github.com/ttacon/chalk"
 	"log"
 	"os"
 )
@@ -75,10 +77,10 @@ Each of those being MarkDown, Man Pages, or ReStructured Text respectively.`,
 			}
 		} else {
 			err := doc.GenMarkdownTree(rootCmd, dir)
-			if err != nil {
-				log.Fatal(err)
-			}
+			if CheckError(err) {return}
 		}
+		fmt.Println(NewMessage(chalk.Green, "Documentation has been generated in: ").
+			ThenColor(chalk.Cyan, dir))
 	},
 }
 

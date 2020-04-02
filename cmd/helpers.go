@@ -54,10 +54,10 @@ func DownloadFile(filepath string, url string) error {
 func CheckError(err error) bool {
 	if err != nil {
 		if strings.Contains(err.Error(), "executable file not found") {
-			fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!").Build())
+			fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!"))
 			return true
 		}
-		fmt.Println(NewMessage(chalk.Red, err.Error()).Build())
+		fmt.Println(NewMessage(chalk.Red, err.Error()).String())
 		return true
 	}
 	return false

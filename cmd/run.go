@@ -61,11 +61,11 @@ with a single command.`,
 						args[1] = inargs[1]
 						args = append(args, inargs[2:]...)
 					} else {
-						fmt.Println(NewMessage(chalk.Red, "You must provide a file to run!").Build())
+						fmt.Println(NewMessage(chalk.Red, "You must provide a file to run!"))
 						return
 					}
 				} else {
-					fmt.Println(NewMessage(chalk.Red, "Invalid alias configuration!").Build())
+					fmt.Println(NewMessage(chalk.Red, "Invalid alias configuration!"))
 					return
 				}
 			} else {
@@ -78,9 +78,9 @@ with a single command.`,
 		gist, _, err := gcli.Gists.Get(context.Background(), args[0])
 		if err != nil {
 			if strings.Contains(err.Error(), "404 Not Found") {
-				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("That gist couldn't be found!"))
+				fmt.Println(NewMessage(chalk.Red, "That gist couldn't be found!"))
 			} else if strings.Contains(err.Error(), "no such host") {
-				fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("It looks like you don't have an internet connection!"))
+				fmt.Println(NewMessage(chalk.Red, "It looks like you don't have an internet connection!"))
 			} else {
 				fmt.Println(err.Error())
 			}
@@ -96,12 +96,12 @@ with a single command.`,
 
 			if file.GetSize() > 0 {
 				if !yes {
-					menu := wmenu.NewMenu(NewMessage(chalk.Red, "Are you sure you want to run this script?").Build())
+					menu := wmenu.NewMenu(NewMessage(chalk.Red, "Are you sure you want to run this script?").String())
 					menu.IsYesNo(wmenu.DefN)
 					menu.Action(verifyYes)
 					err := menu.Run()
 					if err != nil {
-						fmt.Println(NewMessage(chalk.Red, err.Error()).Build())
+						fmt.Println(NewMessage(chalk.Red, err.Error()))
 						return
 					}
 					if !yes {
@@ -150,7 +150,7 @@ with a single command.`,
 							}
 							break
 						} else {
-							fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!").Build())
+							fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!"))
 							return
 						}
 					}
@@ -166,7 +166,7 @@ with a single command.`,
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
 							fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
-								ThenColorStyle(chalk.Red, chalk.Underline, "https://golang.org").Build())
+								ThenColorStyle(chalk.Red, chalk.Underline, "https://golang.org"))
 						}
 						err = os.Remove(dlpath + "tmp.go")
 						if CheckError(err) {
@@ -187,7 +187,7 @@ with a single command.`,
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
 							fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
-								ThenColorStyle(chalk.Red, chalk.Underline, "https://nodejs.org").Build())
+								ThenColorStyle(chalk.Red, chalk.Underline, "https://nodejs.org"))
 						}
 						err = os.Remove(dlpath + "tmp.js")
 						if CheckError(err) {
@@ -212,7 +212,7 @@ with a single command.`,
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
 								fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
-									ThenColorStyle(chalk.Red, chalk.Underline, "https://www.python.org").Build())
+									ThenColorStyle(chalk.Red, chalk.Underline, "https://www.python.org"))
 							}
 						} else if fst == "#!/usr/bin/python" {
 							a := []string{dlpath + "tmp.py"}
@@ -221,7 +221,7 @@ with a single command.`,
 							CheckError(err)
 							if err != nil && strings.Contains(err.Error(), "executable file not found") {
 								fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
-									ThenColorStyle(chalk.Red, chalk.Underline, "https://www.python.org").Build())
+									ThenColorStyle(chalk.Red, chalk.Underline, "https://www.python.org"))
 							}
 						} else {
 							fmt.Println(chalk.Cyan.Color("[QSR]"), chalk.Red.Color("Cannot determine language!"))
@@ -244,7 +244,7 @@ with a single command.`,
 						CheckError(err)
 						if err != nil && strings.Contains(err.Error(), "executable file not found") {
 							fmt.Println(NewMessage(chalk.Red, "You can find instructions to install it here:").
-								ThenColorStyle(chalk.Red, chalk.Underline, "https://ruby-lang.org").Build())
+								ThenColorStyle(chalk.Red, chalk.Underline, "https://ruby-lang.org"))
 						}
 						err = os.Remove(dlpath + "tmp.rb")
 						if CheckError(err) {
@@ -269,18 +269,18 @@ with a single command.`,
 							}
 							break
 						} else {
-							fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!").Build())
+							fmt.Println(NewMessage(chalk.Red, "That language isn't supported on your system!"))
 							return
 						}
 					}
 				default:
 					{
-						fmt.Println(NewMessage(chalk.Red, "That language isn't supported!").Build())
+						fmt.Println(NewMessage(chalk.Red, "That language isn't supported!"))
 						break
 					}
 				}
 			} else {
-				fmt.Println(NewMessage(chalk.Red, "That file doesn't exist!").Build())
+				fmt.Println(NewMessage(chalk.Red, "That file doesn't exist!"))
 			}
 		}
 	},
