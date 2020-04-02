@@ -24,7 +24,7 @@ import (
 
 // createCmd represents the create command
 var linkCmd = &cobra.Command{
-	Use:   "link <alias> <gist> [file]",
+	Use:   "link <alias> <gist> [<file>]",
 	Short: "Link a gist or file alias",
 	Long: `Link a gist or file alias in your config.`,
 	Args: cobra.MinimumNArgs(2),

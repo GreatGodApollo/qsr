@@ -31,11 +31,11 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "qsr [command] [arguments]",
+	Use:   "qsr <command> [<arguments>]",
 	Short: "A quick and easy way to run gists",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
-	Version: "0.8.1",
+	Version: "0.9.0",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

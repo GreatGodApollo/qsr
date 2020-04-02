@@ -30,7 +30,7 @@ var dir string
 
 // docsCmd represents the docs command
 var docsCmd = &cobra.Command{
-	Use:   "docs {md|man|rest}",
+	Use:   "docs (md|man|rest)",
 	Short: "Documentation Generator",
 	Long: `A super quick command to generate documentation for Quick Script Runner
 You can provide a single argument: "md", "man", or "rst" to specify what format you'd like the docs in.

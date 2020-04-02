@@ -43,24 +43,37 @@ That's it! Although you'll probably want to also add the binary to your path for
 
 ```bash
 $ qsr --help
-
-Quick Script Runner is a command line utility that allows you to run gists
-with a single command.
-
-Usage:
-  qsr [command]
-
-Available Commands:
-  docs        Documentation Generator
-  help        Help about any command
-  run         Run a remote gist
-
-Flags:
-  -h, --help      help for qsr
-      --version   version for qsr
-
-Use "qsr [command] --help" for more information about a command.
+  Quick Script Runner is a command line utility that allows you to run gists
+  with a single command.
+  
+  Usage:
+    qsr [command]
+  
+  Available Commands:
+    docs        Documentation Generator
+    help        Help about any command
+    link        Link a gist or file alias
+    run         Run a remote gist
+    source      Get a link to the source code
+    unlink      Remove a gist or file alias
+  
+  Flags:
+        --config string   config file (default is $HOME/.qsr.json)
+    -h, --help            help for qsr
+        --version         version for qsr
+  
+  Use "qsr [command] --help" for more information about a command.
 ```
+
+## Supported Languages
+- Batch (Windows Only)
+- Golang
+- JavaScript
+- Python 2 & 3 (Set with shebang ie. `#!/usr/bin/python3`)
+- Ruby
+- Shell
+
+This list can be expanded on, either create an issue, or a PR to request a new language!
 
 ## Licensing
 

@@ -39,7 +39,7 @@ var dlpath string
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
-	Use:   "run [gist id] [filename] [arguments]",
+	Use:   "run (<gist_id> <file>|<alias> [<file>]) [<arguments>...]",
 	Short: "Run a remote gist",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
