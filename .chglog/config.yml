@@ -18,10 +18,9 @@ options:
     #   perf: Performance Improvements
     #   refactor: Code Refactoring
   header:
-    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
+    pattern: "^(\\w*)\\:\\s(.*)$"
     pattern_maps:
       - Type
-      - Scope
       - Subject
   notes:
     keywords:
