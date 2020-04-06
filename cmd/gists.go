@@ -26,10 +26,13 @@ func SetGists() {
 	 * and to gists.md
 	 */
 
-
 	//// "apollo": GreatGodApollo (Author)
 	viper.Set("apollo", map[string]string{"gist": "00d91bfb540b8bc0169606b4d4f740a3"})
 
+	//// "hello-world": Hello, World Scripts!
+	viper.Set("hello-world", map[string]string{"gist": "6240b6a181305b5f5ac7a70763703448"})
+
 	//// "324luke": 324Luke (Contributor)
 	viper.Set("324luke", map[string]string{"gist": "3a30e079e8692cc09776186014090835"})
+
 }
