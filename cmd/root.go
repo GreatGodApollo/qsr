@@ -35,7 +35,7 @@ var rootCmd = &cobra.Command{
 	Short: "A quick and easy way to run gists",
 	Long: `Quick Script Runner is a command line utility that allows you to run gists
 with a single command.`,
-	Version: "1.0.0",
+	Version: "1.1.0",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -61,12 +61,16 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		home, err := homedir.Dir()
-		if CheckError(err) {os.Exit(1)}
+		if CheckError(err) {
+			os.Exit(1)
+		}
 
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".qsr")
 		viper.SetConfigType("json")
-		if createFileIfNotExist(home + "/", ".qsr.json") != nil {os.Exit(1)}
+		if createFileIfNotExist(home+"/", ".qsr.json") != nil {
+			os.Exit(1)
+		}
 
 	}
 
@@ -76,16 +80,22 @@ func initConfig() {
 		fmt.Println(NewMessage(chalk.Blue, "Using config file:").ThenColor(chalk.Green, viper.ConfigFileUsed()))
 	}
 	SetGists()
-	if CheckError(viper.WriteConfig()) {os.Exit(1)}
+	if CheckError(viper.WriteConfig()) {
+		os.Exit(1)
+	}
 }
 
 func createFileIfNotExist(dir, file string) error {
 	if _, err := os.Stat(dir + file); err != nil {
 		if os.IsNotExist(err) {
 			f, err := os.Create(dir + file)
-			if CheckError(err) {return err}
+			if CheckError(err) {
+				return err
+			}
 			err = f.Close()
-			if CheckError(err) {return err}
+			if CheckError(err) {
+				return err
+			}
 		} else {
 			return err
 		}

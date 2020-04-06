@@ -45,10 +45,10 @@ var runCmd = &cobra.Command{
 with a single command.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, inargs []string) {
-		var args = make([]string,2)
+		var args = make([]string, 2)
 		if viper.ConfigFileUsed() != "" {
 			sub := viper.GetStringMapString(inargs[0])
-			if sub != nil {
+			if len(sub) != 0 {
 				if sub["gist"] != "" && sub["file"] != "" {
 					args[0] = sub["gist"]
 					args[1] = sub["file"]
