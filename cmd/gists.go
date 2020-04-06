@@ -32,4 +32,7 @@ func SetGists() {
 
 	//// "324luke": 324Luke (Contributor)
 	viper.Set("324luke", map[string]string{"gist": "3a30e079e8692cc09776186014090835"})
+	
+	//// "Hello world": 324Luke (Contributor)
+	viper.Set("hello-world", map[string]string{"gist": "6240b6a181305b5f5ac7a70763703448"})
 }
