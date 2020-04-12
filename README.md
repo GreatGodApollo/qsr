@@ -4,33 +4,6 @@
 
 Quick Script Runner (qsr) is a command line utility program that allows users to run code from github gists quickly with just a single command
 
-## Built With
-
-* [wmenu](https://github.com/dixonwille/wmenu/)
-* [go-cmd](https://github.com/go-cmd/cmd)
-* [go-github](https://github.com/google/go-github)
-* [Cobra](https://github.com/spf13/cobra)
-* [Chalk](https://github.com/ttacon/chalk)
-
-
-## Compiling
-
-To compile the executable from the source, it's extremely easy, and can be done in as little as 3 commands.
-
-You can follow these instructions to build:
-```bash
-
-# This assumes you already have git and golang installed.
-
-$ git clone https://github.com/GreatGodApollo/qsr.git
-
-$ cd qsr
-
-$ go build
-
-```
-
-
 ## Installing
 
 ### Standard Download
@@ -79,6 +52,17 @@ $ qsr --help
   Use "qsr [command] --help" for more information about a command.
 ```
 
+### Configuration
+These values can be set in `~/.qsr.json`. The options listed are unable to be used as alias names.
+
+Configuration options available:
+
+#### `token` - *Personal OAuth token for Github*
+A personal OAuth token can be generated on your [tokens](https://github.com/settings/tokens) page. This allows for the
+60 requests per hour limit to be surpassed.
+
+***This token does not need any special scopes.***
+
 ## Included Gists
 To prevent overcrowding this README, the included gist aliases are located in [gists.md](gists.md)
 
@@ -91,6 +75,32 @@ To prevent overcrowding this README, the included gist aliases are located in [g
 - Shell
 
 This list can be expanded on, either create an issue, or a PR to request a new language!
+
+## Built With
+
+* [wmenu](https://github.com/dixonwille/wmenu/)
+* [go-cmd](https://github.com/go-cmd/cmd)
+* [go-github](https://github.com/google/go-github)
+* [Cobra](https://github.com/spf13/cobra)
+* [Chalk](https://github.com/ttacon/chalk)
+
+
+## Compiling
+
+To compile the executable from the source, it's extremely easy, and can be done in as little as 3 commands.
+
+You can follow these instructions to build:
+```bash
+
+# This assumes you already have git and golang installed.
+
+$ git clone https://github.com/GreatGodApollo/qsr.git
+
+$ cd qsr
+
+$ go build
+
+```
 
 ## Licensing
 
