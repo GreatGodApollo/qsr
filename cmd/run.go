@@ -23,14 +23,14 @@ import (
 	"github.com/dixonwille/wmenu/v5"
 	"github.com/google/go-github/github"
 	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/ttacon/chalk"
+	"golang.org/x/oauth2"
 	"net/http"
 	"os"
 	"runtime"
 	"strings"
-
-	"github.com/spf13/cobra"
 )
 
 var justPrint bool
@@ -74,13 +74,27 @@ with a single command.`,
 		} else {
 			args = inargs
 		}
-		gcli := github.NewClient(&http.Client{})
-		gist, _, err := gcli.Gists.Get(context.Background(), args[0])
+		var gcli *github.Client
+		ctx := context.Background()
+		if viper.GetString("token") != "" {
+			ts := oauth2.StaticTokenSource(
+				&oauth2.Token{AccessToken: viper.GetString("token")},
+			)
+			tc := oauth2.NewClient(ctx, ts)
+			gcli = github.NewClient(tc)
+			fmt.Println(NewMessage(chalk.Green, "Using authentication token"))
+		} else {
+			gcli = github.NewClient(&http.Client{})
+		}
+
+		gist, _, err := gcli.Gists.Get(ctx, args[0])
 		if err != nil {
 			if strings.Contains(err.Error(), "404 Not Found") {
 				fmt.Println(NewMessage(chalk.Red, "That gist couldn't be found!"))
 			} else if strings.Contains(err.Error(), "no such host") {
 				fmt.Println(NewMessage(chalk.Red, "It looks like you don't have an internet connection!"))
+			} else if strings.Contains(err.Error(), "401 Bad credentials") {
+				fmt.Println(NewMessage(chalk.Red, "Looks like your OAuth token is invalid or misconfigured!"))
 			} else {
 				fmt.Println(err.Error())
 			}

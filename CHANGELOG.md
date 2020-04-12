@@ -2,9 +2,16 @@
 ## [Unreleased]
 
 
+<a name="v1.2.0"></a>
+## [v1.2.0] - 2020-04-12
+### Feat
+- API authentication
+
+
 <a name="v1.1.0"></a>
 ## [v1.1.0] - 2020-04-06
 ### Docs
+- Create code of conduct
 - Update changelog template
 - Add changelog
 
@@ -33,7 +40,8 @@
 <a name="v0.5"></a>
 ## v0.5 - 2020-03-22
 
-[Unreleased]: https://github.com/GreatGodApollo/qsr/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/GreatGodApollo/qsr/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/GreatGodApollo/qsr/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/GreatGodApollo/qsr/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/GreatGodApollo/qsr/compare/v0.9.0...v1.0.0
 [v0.9.0]: https://github.com/GreatGodApollo/qsr/compare/v0.8.0...v0.9.0
